@@ -3,6 +3,7 @@ Class = require "class"
 
 require "Paddle"
 require "Ball"
+require "Score"
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -13,6 +14,7 @@ VIRTUAL_HEIGHT = 243
 PADDLE_SPEED = 200
 
 GAME_START = false
+GAME_OVER = false
 
 
 function love.load()
@@ -24,15 +26,13 @@ function love.load()
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {fullscreen = false, vsync = true}) --launching the game window
 
-    player1Score = 0 --player 1 score variable
-    player2Score = 0 --player 2 score variable
-
     --initial positions of the paddles
     Paddle1 = Paddle(10, VIRTUAL_HEIGHT / 2, 5, 20)
     Paddle2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2, 5, 20)
 
     --initial position of the ball
     Ball = Ball(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2 + 2, 4, 4)
+    Score = Score(0, VIRTUAL_WIDTH, 0,  0, math.random(1, 2))
 
 end
 
@@ -41,7 +41,15 @@ function love.keypressed(key)
         love.event.quit()
     end
 
-    GAME_START = true
+    if key == 'r' then
+        GAME_START = false
+        GAME_OVER = false
+        Score:reset()
+    else
+        GAME_START = true
+    end
+
+    --GAME_START = true
 end
 
 function love.draw()
@@ -62,8 +70,11 @@ function love.draw()
 
     --Scores
     if GAME_START == true then
-        love.graphics.print(player1Score, VIRTUAL_WIDTH / 2 - 36, VIRTUAL_HEIGHT / 3 - 50)
-        love.graphics.print(player2Score, VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3 - 50)
+        Score:render(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
+    end
+
+    if GAME_OVER == true then
+        Score:renderGameOver(VIRTUAL_WIDTH, VIRTUAL_HEIGHT)
     end
     push:apply("end")
 end
@@ -126,5 +137,13 @@ function love.update(dt)
 
     Paddle1:update(dt)
     Paddle2:update(dt)
+    Score:update(Ball)
+
+    if Score:isGameOver() then
+        GAME_OVER = true
+        Ball:reset()
+        Paddle1:reset()
+        Paddle2:reset()
+    end
 
 end
