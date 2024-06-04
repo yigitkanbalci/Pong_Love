@@ -27,8 +27,8 @@ function love.load()
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {fullscreen = false, vsync = true}) --launching the game window
 
     --initial positions of the paddles
-    Paddle1 = Paddle(10, VIRTUAL_HEIGHT / 2, 5, 20)
-    Paddle2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2, 5, 20)
+    Paddle1 = Paddle(10, VIRTUAL_HEIGHT / 2, 5, 25)
+    Paddle2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT / 2, 5, 25)
 
     --initial position of the ball
     Ball = Ball(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2 + 2, 4, 4)
@@ -142,8 +142,6 @@ function love.update(dt)
     if Score:isGameOver() then
         GAME_OVER = true
         Ball:reset()
-        Paddle1:reset()
-        Paddle2:reset()
     end
 
 end
