@@ -16,12 +16,14 @@ function Score:reset()
     self.gameOver = false
 end
 
-function Score:update(Ball)
+function Score:update(Ball, AudioPlayer)
     if Ball.x < self.leftBound then
+        AudioPlayer:play("score_sound")
         self.player2Score = self.player2Score + 1
         self.serving = 2
         Ball:reset()
     elseif Ball.x > self.rightBound then
+        AudioPlayer:play("score_sound")
         self.player1Score = self.player1Score + 1
         self.serving = 1
         Ball:reset()

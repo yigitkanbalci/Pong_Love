@@ -4,6 +4,7 @@ Class = require "class"
 require "Paddle"
 require "Ball"
 require "Score"
+require "AudioPlayer"
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -34,6 +35,14 @@ function love.load()
     Ball = Ball(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2 + 2, 4, 4)
     Score = Score(0, VIRTUAL_WIDTH, 0,  0, math.random(1, 2))
 
+    --Load sound effect files into the AudioPlayer class
+    sounds = {
+        ["paddle_hit"] = "sounds/Hit.wav",
+        ["score_sound"] = "sounds/Score.wav",
+        ["wall_hit"] = "sounds/Wall.wav",
+    }
+
+    AudioPlayer = AudioPlayer(sounds)
 end
 
 function love.keypressed(key)
@@ -99,6 +108,7 @@ function love.update(dt)
     end
 
     if Ball:collides(Paddle1) then
+        AudioPlayer:play("paddle_hit")
         Ball.dx = -Ball.dx * 1.03
         Ball.x = Paddle1.x + 5
 
@@ -110,6 +120,7 @@ function love.update(dt)
     end
 
     if Ball:collides(Paddle2) then
+        AudioPlayer:play("paddle_hit")
         Ball.dx = -Ball.dx * 1.03
         Ball.x = Paddle2.x - 5
         
@@ -120,11 +131,13 @@ function love.update(dt)
     end
 
     if Ball.y >= VIRTUAL_HEIGHT - 4 then
+        AudioPlayer:play("wall_hit")
         Ball.y = VIRTUAL_HEIGHT - 4
         Ball.dy = -Ball.dy
     end
 
     if Ball.y <= 0 then
+        AudioPlayer:play("wall_hit")
         Ball.y = 0
         Ball.dy = -Ball.dy
     end
@@ -137,7 +150,7 @@ function love.update(dt)
 
     Paddle1:update(dt)
     Paddle2:update(dt)
-    Score:update(Ball)
+    Score:update(Ball, AudioPlayer)
 
     if Score:isGameOver() then
         GAME_OVER = true
